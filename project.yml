@@ -1,0 +1,63 @@
+name: CarromAim
+options:
+  bundleIdPrefix: com.mohammed
+  deploymentTarget:
+    iOS: "15.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGNING_ALLOWED: "NO"
+    CODE_SIGNING_REQUIRED: "NO"
+    CODE_SIGN_IDENTITY: ""
+targets:
+  CarromAim:
+    type: application
+    platform: iOS
+    sources:
+      - CarromAimApp.swift
+      - LinkReceiver.swift
+      - PiPManager.swift
+      - Model.swift
+      - Physics.swift
+    scheme: {}
+    info:
+      path: Generated/App-Info.plist
+      properties:
+        CFBundleDisplayName: Carrom Aim
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UIBackgroundModes: [audio]
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UIRequiresFullScreen: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mohammed.carromaim
+        TARGETED_DEVICE_FAMILY: "1,2"
+    dependencies:
+      - target: CarromBroadcast
+        embed: true
+  CarromBroadcast:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Analyzer.swift
+      - SampleHandler.swift
+      - Model.swift
+      - Physics.swift
+    info:
+      path: Generated/Broadcast-Info.plist
+      properties:
+        CFBundleDisplayName: Carrom Aim
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.broadcast-services-upload
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).SampleHandler
+          RPBroadcastProcessMode: RPBroadcastProcessModeSampleBuffer
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mohammed.carromaim.broadcast
+        TARGETED_DEVICE_FAMILY: "1,2"
