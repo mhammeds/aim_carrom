@@ -1,0 +1,37 @@
+name: Build IPA (unsigned)
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: mkdir -p Generated && xcodegen generate
+
+      - name: Build (no signing)
+        run: |
+          xcodebuild -project CarromAim.xcodeproj -scheme CarromAim \
+            -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            -quiet build
+
+      - name: Package IPA
+        run: |
+          mkdir -p Payload Generated
+          cp -R build/Build/Products/Release-iphoneos/CarromAim.app Payload/
+          ls Payload/CarromAim.app/PlugIns
+          zip -qry CarromAim-unsigned.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CarromAim-unsigned-ipa
+          path: CarromAim-unsigned.ipa
